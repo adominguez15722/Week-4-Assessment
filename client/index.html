@@ -9,29 +9,43 @@
 
     <br>
     <br>
-    <form action="submit">
-      <label for="classmate">Name</label>
-      <input type="text">
+
+    <form id="classmates-form">
+    
+
+      <input id="classmates-input" type="text" placeholder="Enter your name"/>
+     
+      <button id="submit">Add a Classmate</button>
       
     </form>
     
+    <ul id="classmate-display"></ul>
+
+    <br>
     
-    <button id="submit">Check Classmates</button>
+    <!-- <button id="list-classmates">Check Classmates</button> -->
     
     
     
 
-    <button id="classmates">Change classmates</button>
+    <!-- <button id="classmates">Change classmates</button> -->
 
-    <button id="delete">Classmate gone</button>
+    <!-- <button id="delete">Classmate gone</button> -->
 
-    <button id="allCompliments">Get all compliments</button>
-    <button id="allFortunes">Get all fortunes</button>
+    <!-- <button id="allCompliments">Get all compliments</button>
+    <button id="allFortunes">Get all fortunes</button> -->
 
-    <button id="add">Add Classmate</button>
+    <!-- <button id="add">Add Classmate</button> -->
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
+      
+    const classmatesForm = document.querySelector('#classmates-form')
+    const classmatesInput = document.querySelector('#classmates-input')
+    const classmatesDisplay = document.querySelector('#classmate-display')
+      
+      
+      
       document.getElementById("complimentButton").onclick = function () {
         axios.get("http://localhost:4000/api/compliment/")
             .then(function (response) {
@@ -48,56 +62,109 @@
         });
         };
 
-        document.getElementById("submit").onclick = function () {
-          axios.get("http://localhost:4000/api/classmates")
-            .then(function (res)  {
-              const data = res.data;
-              alert(data)
-            })
-        }
+        // document.getElementById("list-classmates").onclick = function () {
+        //   axios.get("http://localhost:4000/api/classmates")
+        //     .then(function (res)  {
+        //       const data = res.data;
+        //       alert(data)
+        //     })
+        // }
 
-        document.getElementById("classmates").onclick = function () {
-          console.log('test')
+
+  const deleteClassmate = (evt) => {
+      
+      axios
+        .delete(`http://localhost:4000/api/classmates/${evt.target.getAttribute('id')}`)
+        .then(res => {
+          const [removedMate, newMates] = res.data;
     
-          axios.put("http://localhost:4000/api/Daniel")
-            .then(function (res)  {
-              const data = res.data;
-              alert(data)
-            })
-        }
+          alert(`Successfully removed ${removedMate.classmate} with id of ${removedMate.id}!`)
+    
+          showMates(newMates)
+        })
+        .catch(err => console.log(err))
+    }
+    
+    
+    
+    
+    
+    const showMates = arr => {
+      classmatesDisplay.innerHTML = '';
+    
+      arr.forEach(mateObj => {
+        const newLi = document.createElement('li')
+        newLi.textContent = mateObj.classmate
+        newLi.setAttribute('id', mateObj.id)
+    
+        newLi.addEventListener('click', deleteClassmate)
+    
+        classmatesDisplay.appendChild(newLi)
+      })
+    }
+    
+    
+    
+    classmatesForm.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+    
+      const classmatesText = classmatesInput.value;
+    
+      if (!classmatesText.trim()) {
+        alert('Must enter a name!')
+        return;
+      }
 
-        document.getElementById("delete").onclick = function () {
-          axios.delete("http://localhost:4000/api/classmates/Bill")
-          .then(function (res) {
-            const data = res.data;
-            alert(data)
-          })
-        }
+    axios
+        .post('http://localhost:4000/api/classmates', { classmate: classmatesText })
+        .then(res => {
+          showMates(res.data)
+        })
+        .catch(err => console.log(err))
+      })
+
+        // document.getElementById("classmates").onclick = function () {
+        //   console.log('test')
+    
+        //   axios.put("http://localhost:4000/api/Daniel")
+        //     .then(function (res)  {
+        //       const data = res.data;
+        //       alert(data)
+        //     })
+        // }
+
+        // document.getElementById("delete").onclick = function () {
+        //   axios.delete("http://localhost:4000/api/classmates/Bill")
+        //   .then(function (res) {
+        //     const data = res.data;
+        //     alert(data)
+        //   })
+        // }
 
 
-        document.getElementById("allCompliments").onclick = function () {
-        axios.get("http://localhost:4000/api/compliments/")
-            .then(function (response) {
-              const data = response.data;
-              alert(data);
-            });
-          }
+        // document.getElementById("allCompliments").onclick = function () {
+        // axios.get("http://localhost:4000/api/compliments/")
+        //     .then(function (response) {
+        //       const data = response.data;
+        //       alert(data);
+        //     });
+        //   }
 
-          document.getElementById("allFortunes").onclick = function () {
-          axios.get("http://localhost:4000/api/fortunes")
-          .then( function (res)  {
-            const data = res.data;
-            alert(data);
-        });
-        };
+        //   document.getElementById("allFortunes").onclick = function () {
+        //   axios.get("http://localhost:4000/api/fortunes")
+        //   .then( function (res)  {
+        //     const data = res.data;
+        //     alert(data);
+        // });
+        // };
 
-        document.getElementById("add").onclick = function ()  {
-          axios.post("http://localhost:4000/api/Dan")
-            .then(function (res)  {
-              const data = res.data;
-              alert(data);
-            })
-        };
+        // document.getElementById("add").onclick = function ()  {
+        //   axios.post("http://localhost:4000/api/Dan")
+        //     .then(function (res)  {
+        //       const data = res.data;
+        //       alert(data);
+        //     })
+        // };
 
 
 

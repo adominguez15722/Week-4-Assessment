@@ -39,10 +39,9 @@ app.get("/api/fortune", (req, res) => {
 
 
 
-const classmates = ["Daniel",
-           "Juan",
-           "Lucas", "Nick", "Bill"]
+const classmates = []
 
+let id = 1;
 
 app.get("/api/classmates", (req, res) => {
  
@@ -50,70 +49,101 @@ app.get("/api/classmates", (req, res) => {
 
 });
 
-app.get("/api/compliments", (req, res) => {
-  const compliments = ["Gee, you're a smart cookie!",
-					 "Cool shirt!",
-					 "Your Javascript skills are stellar.",
-  ];
-  
-  res.status(200).send(compliments)
+
+
+app.post('/api/classmates', (req, res) => {
+  const { classmate } = req.body;
+
+  let newMate = {
+    id,
+    classmate
+  };
+
+  classmates.push(newMate)
+  id++
+
+  res.status(200).send(classmates);
 })
 
-app.get("/api/fortunes", (req, res) => {
-  const fortunes = ["A new perspective will come with the new year",
-          "A gambler not only will lose what he has, but also will lose what he doesn't have",
-          "A good friendship is often more important than a passionate romance.",
-          "Advice, when most needed, is least heeded.",
-          "Depart not from the path which fate has you assigned."
-];
+app.delete('/api/classmates/:classmatesId', (req, res) => {
+  const classmatesId = +req.params.classmatesId;
 
-  res.status(200).send(fortunes);
-});
+  // console.log(classmatesId)
+
+  const tgtMate = classmates.findIndex(mateObj => {
+    return mateObj.id === classmatesId;
+  })
+  const removed = classmates.splice(tgtMate, 1)
+
+
+  res.status(200).send([removed[0], classmates])
+
+})
+
+// app.get("/api/compliments", (req, res) => {
+//   const compliments = ["Gee, you're a smart cookie!",
+// 					 "Cool shirt!",
+// 					 "Your Javascript skills are stellar.",
+//   ];
+  
+//   res.status(200).send(compliments)
+// })
+
+// app.get("/api/fortunes", (req, res) => {
+//   const fortunes = ["A new perspective will come with the new year",
+//           "A gambler not only will lose what he has, but also will lose what he doesn't have",
+//           "A good friendship is often more important than a passionate romance.",
+//           "Advice, when most needed, is least heeded.",
+//           "Depart not from the path which fate has you assigned."
+// ];
+
+//   res.status(200).send(fortunes);
+// });
 
 
 //  only works once at the moment when server is restarted
-app.delete("/api/classmates/:classmate", (req, res) => {
+// app.delete("/api/classmates/:classmate", (req, res) => {
 
-  let {classmate} = req.params
-  for(let i = 0; i < classmates.length; i++)  {
-    if(classmates[i] === classmate) {
-      classmates.splice(i, 1)
-      res.status(200).send(`${classmate} removed`)
-      return
-    }
-  }
-  res.status(400).send("Classmate not found")
-})
+//   let {classmate} = req.params
+//   for(let i = 0; i < classmates.length; i++)  {
+//     if(classmates[i] === classmate) {
+//       classmates.splice(i, 1)
+//       res.status(200).send(`${classmate} removed`)
+//       return
+//     }
+//   }
+//   res.status(400).send("Classmate not found")
+// })
 
-app.put("/api/:classmate", (req, res) => {
+// app.put("/api/:classmate", (req, res) => {
 
-  // res.send(console.log(req.params))
+//   // res.send(console.log(req.params))
   
-  let {classmate} = req.params
-  let newMate = 'Danny'
+//   let {classmate} = req.params
+//   let newMate = 'Danny'
  
 
-  for (let i = 0; i < classmates.length; i++) {
-    if (classmates[i] === classmate) {
-      classmates[i] = newMate
-      console.log(classmates)
-      res.status(200).send(classmates)
-      return
-    }
-  }
-  res.status(400).send("Classmate not found.")
-})
+//   for (let i = 0; i < classmates.length; i++) {
+//     if (classmates[i] === classmate) {
+//       classmates[i] = newMate
+//       console.log(classmates)
+//       res.status(200).send(classmates)
+//       return
+//     }
+//   }
+//   res.status(400).send("Classmate not found.")
+// })
 
-//  not working yet
+// //  not working yet
 
 
-app.post("/api/:classmate", (req, res) => {
-  let {classmate} = req.params
+// app.post("/api/:classmate", (req, res) => {
+//   let {classmate} = req.params
 
-  classmates.push(classmate)
+//   classmates.push(classmate)
 
-  res.status(200).send(classmates)
-})
+//   res.status(200).send(classmates)
+// })
 
 
 
